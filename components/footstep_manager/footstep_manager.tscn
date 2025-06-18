@@ -1,0 +1,28 @@
+[gd_scene load_steps=8 format=3 uid="uid://b5486oykgktw7"]
+
+[ext_resource type="Script" uid="uid://bek5heu4d4qbr" path="res://objects/player/FootstepManager.cs" id="1_4kr3u"]
+[ext_resource type="AudioStream" uid="uid://busu7hhw4b8fe" path="res://assets/audio/player/footsteps/walk_concrete_01.wav" id="2_ylngi"]
+[ext_resource type="AudioStream" uid="uid://gprkgo6aeoky" path="res://assets/audio/player/footsteps/walk_concrete_02.wav" id="3_njkue"]
+[ext_resource type="AudioStream" uid="uid://browh8kkq5txj" path="res://assets/audio/player/footsteps/walk_concrete_03.wav" id="4_nmt5n"]
+[ext_resource type="AudioStream" uid="uid://xi07cxorvf4r" path="res://assets/audio/player/footsteps/walk_concrete_04.wav" id="5_tq76s"]
+[ext_resource type="AudioStream" uid="uid://br7i2bkohjl5a" path="res://assets/audio/player/footsteps/walk_concrete_05.wav" id="6_a0i5t"]
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_86hp4"]
+random_pitch = 1.1
+random_volume_offset_db = 0.2
+streams_count = 5
+stream_0/stream = ExtResource("2_ylngi")
+stream_1/stream = ExtResource("3_njkue")
+stream_2/stream = ExtResource("4_nmt5n")
+stream_3/stream = ExtResource("5_tq76s")
+stream_4/stream = ExtResource("6_a0i5t")
+
+[node name="FootstepManager" type="Node" node_paths=PackedStringArray("FootstepTimer", "FootstepAudioPlayer")]
+script = ExtResource("1_4kr3u")
+FootstepTimer = NodePath("Timer")
+FootstepAudioPlayer = NodePath("AudioStreamPlayer")
+
+[node name="Timer" type="Timer" parent="."]
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = SubResource("AudioStreamRandomizer_86hp4")

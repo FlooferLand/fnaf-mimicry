@@ -1,0 +1,35 @@
+[gd_scene load_steps=6 format=3 uid="uid://dse36i56yivpl"]
+
+[ext_resource type="Script" uid="uid://crg218yhwsxb0" path="res://components/flashlight/Flashlight.cs" id="1_6yb3v"]
+[ext_resource type="AudioStream" uid="uid://crsd0jx4c0onp" path="res://audio/sfx/player/flashlight_turnon.mp3" id="2_htxcv"]
+[ext_resource type="AudioStream" uid="uid://wh0rl0imiil5" path="res://audio/sfx/player/flashlight_turnoff.mp3" id="3_fi67r"]
+[ext_resource type="Texture2D" uid="uid://bf8jkdn2ja1yf" path="res://textures/light_ies/flashlight.tres" id="4_iccme"]
+[ext_resource type="AudioStream" uid="uid://0hbo20b0lp50" path="res://audio/sfx/player/faslhlight_buzz.mp3" id="5_hwvxu"]
+
+[node name="Flashlight" type="Node3D" node_paths=PackedStringArray("Light", "SwitchSound", "AmbientSound")]
+script = ExtResource("1_6yb3v")
+Light = NodePath("Light")
+SwitchSound = NodePath("Switch")
+AmbientSound = NodePath("Ambient")
+TurnOnStream = ExtResource("2_htxcv")
+TurnOffStream = ExtResource("3_fi67r")
+
+[node name="Light" type="SpotLight3D" parent="."]
+visible = false
+light_energy = 3.0
+light_volumetric_fog_energy = 1.5
+light_projector = ExtResource("4_iccme")
+shadow_enabled = true
+spot_range = 8.0
+spot_angle = 40.0
+
+[node name="Switch" type="AudioStreamPlayer" parent="."]
+volume_db = -1.0
+pitch_scale = 1.5
+bus = &"SFX"
+
+[node name="Ambient" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_hwvxu")
+volume_db = 6.0
+pitch_scale = 1.25
+bus = &"SFX"

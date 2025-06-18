@@ -1,0 +1,161 @@
+[gd_scene load_steps=24 format=3 uid="uid://b6hytcftd1018"]
+
+[ext_resource type="Script" uid="uid://n6somt5tpbfd" path="res://objects/player/FirstPersonCharacter.cs" id="1_fpayh"]
+[ext_resource type="Script" uid="uid://dmnch5x6g6u8d" path="res://objects/player/ScreenEffects.cs" id="2_7tk22"]
+[ext_resource type="PackedScene" uid="uid://bbfogcffpq1ci" path="res://assets/characters/player_arms/Player Arms.glb" id="3_fpayh"]
+[ext_resource type="PackedScene" uid="uid://b5486oykgktw7" path="res://components/footstep_manager/footstep_manager.tscn" id="4_7tk22"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_3hiu2"]
+radius = 0.3
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_ntap5"]
+animation = &"L_Raise"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_g122h"]
+advance_mode = 2
+advance_expression = "!interactable_visible"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_icux7"]
+advance_mode = 2
+advance_condition = &"interactable_invisible"
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_fpayh"]
+state_machine_type = 1
+states/L_Raise/node = SubResource("AnimationNodeAnimation_ntap5")
+states/L_Raise/position = Vector2(439, 100)
+states/Start/position = Vector2(201, 100)
+transitions = ["Start", "L_Raise", SubResource("AnimationNodeStateMachineTransition_g122h"), "L_Raise", "End", SubResource("AnimationNodeStateMachineTransition_icux7")]
+graph_offset = Vector2(58, -141)
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_fpayh"]
+animation = &"R_Idle"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_1h81v"]
+animation = &"Sprint"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_xxhbu"]
+animation = &"Walk"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_7tk22"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_ntap5"]
+xfade_time = 0.8
+advance_mode = 2
+advance_condition = &"walking"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_myn43"]
+xfade_time = 0.8
+advance_mode = 2
+advance_condition = &"sprinting"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_13tlf"]
+xfade_time = 0.8
+advance_mode = 2
+advance_condition = &"walking"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_6hd4e"]
+xfade_time = 0.8
+advance_mode = 2
+advance_condition = &"idle"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_bk3cq"]
+xfade_time = 0.8
+advance_mode = 2
+advance_condition = &"idle"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_6nckp"]
+xfade_time = 0.8
+advance_mode = 2
+advance_condition = &"sprinting"
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_fyit5"]
+state_machine_type = 1
+states/R_Idle/node = SubResource("AnimationNodeAnimation_fpayh")
+states/R_Idle/position = Vector2(357, 100)
+states/Sprint/node = SubResource("AnimationNodeAnimation_1h81v")
+states/Sprint/position = Vector2(693, 100)
+states/Walk/node = SubResource("AnimationNodeAnimation_xxhbu")
+states/Walk/position = Vector2(519, 198)
+transitions = ["Start", "R_Idle", SubResource("AnimationNodeStateMachineTransition_7tk22"), "R_Idle", "Walk", SubResource("AnimationNodeStateMachineTransition_ntap5"), "R_Idle", "Sprint", SubResource("AnimationNodeStateMachineTransition_myn43"), "Sprint", "Walk", SubResource("AnimationNodeStateMachineTransition_13tlf"), "Walk", "R_Idle", SubResource("AnimationNodeStateMachineTransition_6hd4e"), "Sprint", "R_Idle", SubResource("AnimationNodeStateMachineTransition_bk3cq"), "Walk", "Sprint", SubResource("AnimationNodeStateMachineTransition_6nckp")]
+graph_offset = Vector2(114, -78)
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_wtvsj"]
+xfade_time = 1.0
+advance_mode = 0
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_crmk0"]
+xfade_time = 1.0
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_g122h"]
+states/Interaction/node = SubResource("AnimationNodeStateMachine_fpayh")
+states/Interaction/position = Vector2(637, 100)
+states/Movement/node = SubResource("AnimationNodeStateMachine_fyit5")
+states/Movement/position = Vector2(381, 100)
+transitions = ["Movement", "Interaction", SubResource("AnimationNodeStateMachineTransition_wtvsj"), "Start", "Movement", SubResource("AnimationNodeStateMachineTransition_crmk0")]
+graph_offset = Vector2(-22, -143)
+
+[node name="FirstPersonCharacter" type="CharacterBody3D" node_paths=PackedStringArray("Head", "HeadInner", "Camera", "InteractRay", "BodyPivot", "FootstepManager", "FearAudioPlayer", "ModelAnimTree")]
+collision_layer = 3
+collision_mask = 3
+script = ExtResource("1_fpayh")
+Head = NodePath("Pivot/Head")
+HeadInner = NodePath("Pivot/Head/HeadBob/HeadShake")
+Camera = NodePath("Pivot/Head/HeadBob/HeadShake/Camera3D")
+InteractRay = NodePath("Pivot/Head/HeadBob/HeadShake/InteractRay")
+BodyPivot = NodePath("Pivot")
+FootstepManager = NodePath("FootstepManager")
+FearAudioPlayer = NodePath("FearAudioPlayer")
+ModelAnimTree = NodePath("Pivot/AnimationTree")
+
+[node name="ScreenEffects" type="CanvasLayer" parent="." node_paths=PackedStringArray("Character")]
+layer = 0
+script = ExtResource("2_7tk22")
+Character = NodePath("..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_3hiu2")
+
+[node name="Pivot" type="Node3D" parent="."]
+
+[node name="Head" type="Node3D" parent="Pivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
+
+[node name="HeadBob" type="Node3D" parent="Pivot/Head"]
+
+[node name="HeadShake" type="Node3D" parent="Pivot/Head/HeadBob"]
+
+[node name="Camera3D" type="Camera3D" parent="Pivot/Head/HeadBob/HeadShake"]
+doppler_tracking = 1
+current = true
+fov = 70.0
+near = 0.03
+far = 2000.0
+
+[node name="InteractRay" type="RayCast3D" parent="Pivot/Head/HeadBob/HeadShake"]
+target_position = Vector3(0, 0, -1.5)
+hit_from_inside = true
+hit_back_faces = false
+collide_with_areas = true
+collide_with_bodies = false
+
+[node name="Player Arms" parent="Pivot/Head/HeadBob" instance=ExtResource("3_fpayh")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, -1.7, 0)
+
+[node name="AnimationTree" type="AnimationTree" parent="Pivot"]
+root_node = NodePath("../Head/HeadBob/Player Arms")
+tree_root = SubResource("AnimationNodeStateMachine_g122h")
+anim_player = NodePath("../Head/HeadBob/Player Arms/AnimationPlayer")
+parameters/Interaction/conditions/interactable_invisible = false
+parameters/Movement/conditions/idle = true
+parameters/Movement/conditions/sprinting = false
+parameters/Movement/conditions/walking = false
+
+[node name="FootstepManager" parent="." node_paths=PackedStringArray("Player", "HeadBob", "HeadShake") instance=ExtResource("4_7tk22")]
+Player = NodePath("..")
+HeadBob = NodePath("../Pivot/Head/HeadBob")
+HeadShake = NodePath("../Pivot/Head/HeadBob/HeadShake")
+
+[node name="FearAudioPlayer" type="AudioStreamPlayer" parent="."]
