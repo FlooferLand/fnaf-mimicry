@@ -13,6 +13,7 @@ public partial class FirstPersonCharacter : CharacterBody3D {
 	[Export] public required Node3D Head;
 	[Export] public required Node3D HeadInner;
 	[Export] public required Camera3D Camera;
+	[Export] public required CollisionShape3D Collision;
 	[Export] public required RayCast3D InteractRay;
 	[Export] public required Node3D BodyPivot;
 	[Export] public required FootstepManager FootstepManager;
@@ -20,10 +21,12 @@ public partial class FirstPersonCharacter : CharacterBody3D {
 	[Export] public AnimationTree ModelAnimTree;
 
 	// Settings
-	const float Speed = 6.0f;
+	const float CrouchHeightModifier = 0.6f;
+	const float Speed = 5.0f;
 	const float Acceleration = 5.0f;
 	public float MouseSensitivity = 1.0f;
 	public bool Sprinting = false;
+	public bool Crouching = false;
 	public bool CanMove = true;
 
 	// Variables
@@ -42,12 +45,14 @@ public partial class FirstPersonCharacter : CharacterBody3D {
 	IPlayerHoverable? currentlyHovered = null;
 	IPlayerInteractable? currentlyInteracted = null;
 	Vector3 initialHeadPosLocal;
+	float initialCollisionHeight;
 	float initialFov;
 
 	public override void _Ready() {
 		Input.MouseMode = Input.MouseModeEnum.Captured;
 		InitialTransform = GlobalTransform;
 		initialHeadPosLocal = Head.Position;
+		initialCollisionHeight = (Collision.Shape as CapsuleShape3D)!.Height;
 		initialFov = Camera.Fov;
 
 		// Interaction
@@ -113,10 +118,48 @@ public partial class FirstPersonCharacter : CharacterBody3D {
 		Head.Rotation = rot;
 
 		// Sprinting
-		Sprinting = Input.IsActionPressed("sprint");
-		speed = Sprinting ? Speed * 1.5f : Speed;
-		Camera.Fov = Mathf.Lerp(initialFov, Camera.Fov + (Sprinting && !inputDir.IsZeroApprox() ? 15f : 0f), 8f * (float) delta);
-		
+		if (Input.IsActionJustPressed("sprint") && !inputDir.IsZeroApprox() && !Crouching) {
+			Sprinting = true;
+			speed = Speed * 1.5f;
+		} else if (Input.IsActionJustReleased("sprint")) {
+			Sprinting = false;
+			speed = Speed;
+		}
+		if (Sprinting) {
+			Camera.Fov = Mathf.Lerp(initialFov, Camera.Fov + 15f, 8f * (float)delta);
+		}
+
+		// Crouching
+		if (Input.IsActionJustPressed("crouch") && !Sprinting) {
+			Crouching = true;
+			speed = Speed * 0.5f;
+
+			float crouchHeight = initialCollisionHeight * CrouchHeightModifier;
+			(Collision.Shape as CapsuleShape3D)!.Height = crouchHeight;
+			Collision.Position = Vector3.Up * (crouchHeight / 2);
+		} else if (Input.IsActionJustReleased("crouch")) {
+			Crouching = false;
+			speed = Speed;
+
+			Collision.Position = Vector3.Up * (initialCollisionHeight / 2);
+			(Collision.Shape as CapsuleShape3D)!.Height = initialCollisionHeight;
+		}
+
+		// Overall view animation modifiers
+		{
+			// Head position
+			Vector3 headPosMod = Crouching
+				? initialHeadPosLocal * CrouchHeightModifier
+				: initialHeadPosLocal;
+			Head.Position = Head.Position.Lerp(headPosMod, 8f * (float)delta);
+
+			// Camera FoV
+			float fovMod = Sprinting
+				? 15f
+				: (Crouching ? -15f : 0f);
+			Camera.Fov = Mathf.Lerp(initialFov, Camera.Fov + fovMod, 8f * (float)delta);
+		}
+
 		// Movement
 		Velocity = Velocity.WithX(Mathf.Lerp(Velocity.X, direction.X * speed, Acceleration * delta));
 		Velocity = Velocity.WithZ(Mathf.Lerp(Velocity.Z, direction.Z * speed, Acceleration * delta));
@@ -136,7 +179,7 @@ public partial class FirstPersonCharacter : CharacterBody3D {
 			? (Velocity / (direction * speed).Max(Vector3.One)).Length()
 			: 0f;
 		FootstepManager.SetCameraMoving(inputMouseSmooth.Length());
-		FootstepManager.SetWalking(footstepSpeed, Sprinting);
+		FootstepManager.SetWalking(footstepSpeed, Sprinting, Crouching);
 	}
 
 	// TODO: Switch all things that use this over to use the Click & Point player controller instead

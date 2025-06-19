@@ -26,3 +26,5 @@ FootstepAudioPlayer = NodePath("AudioStreamPlayer")
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = SubResource("AudioStreamRandomizer_86hp4")
+volume_db = -6.0
+bus = &"PlayerFootsteps"

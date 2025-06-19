@@ -96,13 +96,14 @@ states/Movement/position = Vector2(381, 100)
 transitions = ["Movement", "Interaction", SubResource("AnimationNodeStateMachineTransition_wtvsj"), "Start", "Movement", SubResource("AnimationNodeStateMachineTransition_crmk0")]
 graph_offset = Vector2(-22, -143)
 
-[node name="FirstPersonCharacter" type="CharacterBody3D" node_paths=PackedStringArray("Head", "HeadInner", "Camera", "InteractRay", "BodyPivot", "FootstepManager", "FearAudioPlayer", "ModelAnimTree")]
+[node name="FirstPersonCharacter" type="CharacterBody3D" node_paths=PackedStringArray("Head", "HeadInner", "Camera", "Collision", "InteractRay", "BodyPivot", "FootstepManager", "FearAudioPlayer", "ModelAnimTree")]
 collision_layer = 3
 collision_mask = 3
 script = ExtResource("1_fpayh")
 Head = NodePath("Pivot/Head")
 HeadInner = NodePath("Pivot/Head/HeadBob/HeadShake")
 Camera = NodePath("Pivot/Head/HeadBob/HeadShake/Camera3D")
+Collision = NodePath("CollisionShape3D")
 InteractRay = NodePath("Pivot/Head/HeadBob/HeadShake/InteractRay")
 BodyPivot = NodePath("Pivot")
 FootstepManager = NodePath("FootstepManager")
@@ -117,6 +118,7 @@ Character = NodePath("..")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 shape = SubResource("CapsuleShape3D_3hiu2")
+debug_color = Color(0, 0.6, 0.701961, 1)
 
 [node name="Pivot" type="Node3D" parent="."]
 
@@ -140,6 +142,7 @@ hit_from_inside = true
 hit_back_faces = false
 collide_with_areas = true
 collide_with_bodies = false
+debug_shape_custom_color = Color(0, 0, 0, 0)
 
 [node name="Player Arms" parent="Pivot/Head/HeadBob" instance=ExtResource("3_fpayh")]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, -1.7, 0)

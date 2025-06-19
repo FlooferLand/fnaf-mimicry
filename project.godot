@@ -15,6 +15,10 @@ run/main_scene="uid://bkwgoj0srl0cp"
 config/features=PackedStringArray("4.4", "C#", "Forward Plus")
 config/icon="uid://csa1se8th8lac"
 
+[audio]
+
+buses/default_bus_layout="uid://brvc41761io0"
+
 [dotnet]
 
 project/assembly_name="FNaF Mimicry"
@@ -65,6 +69,7 @@ crouch={
 
 [physics]
 
+3d/run_on_separate_thread=true
 common/physics_interpolation=true
 
 [rendering]

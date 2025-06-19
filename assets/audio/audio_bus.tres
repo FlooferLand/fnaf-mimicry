@@ -1,0 +1,63 @@
+[gd_resource type="AudioBusLayout" load_steps=6 format=3 uid="uid://brvc41761io0"]
+
+[sub_resource type="AudioEffectReverb" id="AudioEffectReverb_iagll"]
+resource_name = "Reverb"
+predelay_feedback = 0.2
+room_size = 0.3
+damping = 1.0
+spread = 0.2
+wet = 0.3
+
+[sub_resource type="AudioEffectLowPassFilter" id="AudioEffectLowPassFilter_iagll"]
+resource_name = "LowPassFilter"
+cutoff_hz = 20500.0
+
+[sub_resource type="AudioEffectDistortion" id="AudioEffectDistortion_pdg5q"]
+resource_name = "Distortion"
+mode = 2
+drive = 0.7
+
+[sub_resource type="AudioEffectPhaser" id="AudioEffectPhaser_iagll"]
+resource_name = "Phaser"
+feedback = 0.5
+
+[sub_resource type="AudioEffectDistortion" id="AudioEffectDistortion_iagll"]
+resource_name = "Distortion"
+mode = 1
+drive = 0.4
+
+[resource]
+bus/1/name = &"SFX"
+bus/1/solo = false
+bus/1/mute = false
+bus/1/bypass_fx = false
+bus/1/volume_db = 0.0
+bus/1/send = &"Master"
+bus/1/effect/0/effect = SubResource("AudioEffectReverb_iagll")
+bus/1/effect/0/enabled = false
+bus/2/name = &"Music"
+bus/2/solo = false
+bus/2/mute = false
+bus/2/bypass_fx = false
+bus/2/volume_db = 0.0
+bus/2/send = &"Master"
+bus/3/name = &"PlayerFootsteps"
+bus/3/solo = false
+bus/3/mute = false
+bus/3/bypass_fx = false
+bus/3/volume_db = 0.0
+bus/3/send = &"Master"
+bus/3/effect/0/effect = SubResource("AudioEffectLowPassFilter_iagll")
+bus/3/effect/0/enabled = true
+bus/4/name = &"MimicTaunt"
+bus/4/solo = false
+bus/4/mute = false
+bus/4/bypass_fx = false
+bus/4/volume_db = 0.0
+bus/4/send = &"SFX"
+bus/4/effect/0/effect = SubResource("AudioEffectDistortion_pdg5q")
+bus/4/effect/0/enabled = true
+bus/4/effect/1/effect = SubResource("AudioEffectPhaser_iagll")
+bus/4/effect/1/enabled = true
+bus/4/effect/2/effect = SubResource("AudioEffectDistortion_iagll")
+bus/4/effect/2/enabled = true

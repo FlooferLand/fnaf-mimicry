@@ -18,12 +18,17 @@ public partial class FootstepManager : Node {
 	int stepsLeft = 0;
 	float walking = 0f;
 	float movingCamera = 0f;
+	AudioEffectLowPassFilter lowPasFilterBus;
 
 	float footstepPunch = 0f;
 	float time = 0f;
 	
 	public override void _Ready() {
 		FootstepTimer.Timeout += TriggerFootstep;
+
+		// Footsteps audio bus stuff
+		int footstepBus = AudioServer.GetBusIndex("PlayerFootsteps");
+		lowPasFilterBus = AudioServer.GetBusEffect(footstepBus, 0) as AudioEffectLowPassFilter;
 	}
 
 	public override void _Process(double delta) {
@@ -60,14 +65,18 @@ public partial class FootstepManager : Node {
 		}
 	}
 
-	public void SetWalking(float value, bool sprinting=false) {
+	public void SetWalking(float value, bool sprinting=false, bool crouching=false) {
 		walking = Mathf.Clamp(value, 0f, 1f);
 
-		float newWaitTime = (sprinting ? 0.3f : 0.45f);
+		float newWaitTime = sprinting
+			? 0.3f
+			: (crouching ? 0.6f : 0.45f);
 		if (Math.Abs(newWaitTime - FootstepTimer.WaitTime) > 0.1) {
 			FootstepTimer.WaitTime = newWaitTime;
 		}
 
+		FootstepAudioPlayer.VolumeLinear = (crouching ? 0.5f : 1.0f);
+		lowPasFilterBus.CutoffHz = (crouching ? 2200 : 20500);
 		switch (walking) {
 			case > 0.1f when FootstepTimer.TimeLeft == 0:
 				FootstepTimer.Start();
